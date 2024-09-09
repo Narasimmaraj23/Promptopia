@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import Form from "@components/Form";
 
@@ -18,24 +19,23 @@ const EditPrompt = () => {
 
   useEffect(() => {
     const getPromptDetails = async () => {
-        const response = await fetch(`/api/prompt/${promptId}`);
-        const data = await response.json();
+      const response = await fetch(`/api/prompt/${promptId}`);
+      const data = await response.json();
 
-        setPost({
-            prompt: data.prompt,
-            tag: data.tag
-        });
-    }
+      setPost({
+        prompt: data.prompt,
+        tag: data.tag,
+      });
+    };
 
-    if(promptId) getPromptDetails();
-  }, [promptId])
-  
+    if (promptId) getPromptDetails();
+  }, [promptId]);
 
   const updatePrompt = async (e) => {
     e.preventDefault();
     setSubmitting(true);
 
-    if(!promptId) return alert("Prompt Id not found!");
+    if (!promptId) return alert("Prompt Id not found!");
     try {
       const response = await fetch(`/api/prompt/${promptId}`, {
         method: "PATCH",
@@ -66,4 +66,11 @@ const EditPrompt = () => {
   );
 };
 
-export default EditPrompt;
+const Page = () => {
+  return (
+    <Suspense>
+      <EditPrompt />
+    </Suspense>
+  );
+};
+export default Page;
